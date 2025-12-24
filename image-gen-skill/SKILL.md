@@ -1,9 +1,6 @@
 ---
 name: Image Generation
-description: |
-  通过 OpenAI 兼容的 API 生成图片，支持文生图、图生图、多图融合。
-  适用于原型图设计、SVG 设计、Logo 设计等场景。
-  返回 Markdown 格式图片，默认使用流式响应。
+description: 通过 OpenAI 兼容的 API 生成图片，支持文生图、图生图、多图融合。适用于原型图设计、SVG 设计、Logo 设计等场景。
 ---
 
 # Image Generation Skill
