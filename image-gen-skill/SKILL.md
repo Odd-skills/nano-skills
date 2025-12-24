@@ -115,8 +115,8 @@ for prompt in prompts:
 - 支持中途取消长时间任务
 
 ```bash
-# 流式调用（推荐）
-python scripts/generate.py --mode text --prompt "..." --stream
+# 流式调用（默认行为，推荐）
+python scripts/generate.py --mode text --prompt "..."
 
 # 非流式调用（仅在需要完整结果时使用）
 python scripts/generate.py --mode text --prompt "..." --no-stream
