@@ -10,7 +10,7 @@
 curl -X POST http://127.0.0.1:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemini-enterprise",
+    "model": "gemini-3-pro-preview",
     "messages": [
       {"role": "user", "content": "生成一张日落时分的海滩图片，有椰子树和沙滩"}
     ],
@@ -29,7 +29,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="gemini-enterprise",
+    model="gemini-3-pro-preview",
     messages=[{"role": "user", "content": "一只戴帽子的可爱猫咪"}],
     stream=True
 )
@@ -49,7 +49,7 @@ for chunk in response:
 curl -X POST http://127.0.0.1:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemini-enterprise",
+    "model": "gemini-3-pro-preview",
     "messages": [{
       "role": "user",
       "content": [
@@ -77,7 +77,7 @@ with open("photo.jpg", "rb") as f:
     img_b64 = base64.b64encode(f.read()).decode()
 
 response = client.chat.completions.create(
-    model="gemini-enterprise",
+    model="gemini-3-pro-preview",
     messages=[{
         "role": "user",
         "content": [
@@ -115,7 +115,7 @@ with open("content.jpg", "rb") as f:
     content_b64 = base64.b64encode(f.read()).decode()
 
 response = client.chat.completions.create(
-    model="gemini-enterprise",
+    model="gemini-3-pro-preview",
     messages=[{
         "role": "user",
         "content": [

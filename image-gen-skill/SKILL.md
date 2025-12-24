@@ -42,7 +42,7 @@ description: 通过 OpenAI 兼容的 API 生成图片，支持文生图、图生
 **文生图：**
 ```json
 {
-  "model": "gemini-enterprise",
+  "model": "gemini-3-pro-preview",
   "messages": [{"role": "user", "content": "用户的描述"}],
   "stream": true
 }
@@ -51,7 +51,7 @@ description: 通过 OpenAI 兼容的 API 生成图片，支持文生图、图生
 **图生图：**
 ```json
 {
-  "model": "gemini-enterprise",
+  "model": "gemini-3-pro-preview",
   "messages": [{
     "role": "user",
     "content": [
@@ -90,7 +90,7 @@ python scripts/generate.py --mode multi --prompt "融合指令" --images style.j
 |----------|------|--------|
 | `IMAGE_API_BASE` | API 端点 | `http://127.0.0.1:8000/v1` |
 | `IMAGE_API_KEY` | API 密钥 | `default-key` |
-| `IMAGE_MODEL` | 模型名称 | `gemini-enterprise` |
+| `IMAGE_MODEL` | 模型名称 | `gemini-3-pro-preview` |
 | `IMAGE_OUTPUT_MODE` | 输出模式 (url/base64) | `url` |
 | `IMAGE_STREAM` | 启用流式 | `true` |
 
