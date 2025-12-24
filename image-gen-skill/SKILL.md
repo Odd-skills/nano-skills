@@ -84,6 +84,46 @@ python scripts/generate.py --mode multi --prompt "融合指令" --images style.j
 - **URL 模式**：`![image](http://...)`
 - **Base64 模式**：`![image](data:image/png;base64,...)`
 
+## 性能最佳实践
+
+> [!TIP]
+> AI 在使用本 Skill 时应优先采用**并发流式执行**以保证速度。
+
+### 并发执行
+
+当需要生成多张图片时，应**并行发起请求**而非串行等待：
+
+```python
+# ✅ 推荐：并发执行
+import asyncio
+
+async def generate_batch(prompts):
+    tasks = [generate_image(p) for p in prompts]
+    return await asyncio.gather(*tasks)
+
+# ❌ 避免：串行执行
+for prompt in prompts:
+    result = generate_image(prompt)  # 阻塞等待
+```
+
+### 流式输出
+
+始终启用 `stream: true` 以实时获取生成进度：
+
+- 用户可以更早看到部分结果
+- 减少感知的等待时间
+- 支持中途取消长时间任务
+
+```bash
+# 流式调用（推荐）
+python scripts/generate.py --mode text --prompt "..." --stream
+
+# 非流式调用（仅在需要完整结果时使用）
+python scripts/generate.py --mode text --prompt "..." --no-stream
+```
+
+---
+
 ## 配置参数
 
 | 环境变量 | 说明 | 默认值 |
