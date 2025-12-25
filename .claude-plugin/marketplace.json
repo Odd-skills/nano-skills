@@ -1,28 +1,23 @@
 {
-  "name": "Nano Skills Marketplace",
-  "description": "A lightweight AI Agent skills library providing extensible professional capabilities.",
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "nano-skills-marketplace",
+  "description": "A lightweight AI Agent skills library providing extensible professional capabilities including image generation, prototype design, and style transfer.",
   "owner": {
     "name": "Odd-skills",
-    "url": "https://github.com/Odd-skills"
+    "email": "odd-skills@users.noreply.github.com"
   },
   "plugins": [
     {
       "name": "nano-skills",
-      "description": "A collection of AI Agent skills including image generation, prototype design, logo creation, and style transfer.",
+      "description": "AI Agent skills collection including image generation with text-to-image, image-to-image, and multi-image fusion capabilities.",
       "version": "1.0.0",
-      "source": "./",
       "author": {
         "name": "Odd-skills",
-        "url": "https://github.com/Odd-skills"
+        "email": "odd-skills@users.noreply.github.com"
       },
+      "source": "./",
       "category": "productivity",
-      "tags": [
-        "image-generation",
-        "ai-tools",
-        "design",
-        "skills"
-      ],
-      "needsPluginJson": true
+      "homepage": "https://github.com/Odd-skills/nano-skills"
     }
   ]
 }
