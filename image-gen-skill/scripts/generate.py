@@ -3,11 +3,16 @@
 Image Generation Skill - Main Generation Script
 
 支持文生图、图生图、多图融合，默认使用流式响应。
+生成的图片自动保存到临时目录，支持跨平台（Windows/Linux/Mac）。
 """
 
 import argparse
 import base64
+import re
 import sys
+import tempfile
+import uuid
+from datetime import datetime
 from pathlib import Path
 
 try:
@@ -17,6 +22,117 @@ except ImportError:
     sys.exit(1)
 
 from config import Config
+
+
+def get_output_dir() -> Path:
+    """
+    获取跨平台的图片输出目录
+    
+    优先级：
+    1. 环境变量 IMAGE_OUTPUT_DIR
+    2. 系统临时目录下的 image-gen-skill 子目录
+    
+    Returns:
+        输出目录路径
+    """
+    import os
+    
+    # 检查环境变量
+    custom_dir = os.environ.get("IMAGE_OUTPUT_DIR")
+    if custom_dir:
+        output_dir = Path(custom_dir)
+    else:
+        # 使用系统临时目录（跨平台兼容）
+        # tempfile.gettempdir() 会自动选择：
+        # - Windows: C:\\Users\\<user>\\AppData\\Local\\Temp
+        # - Linux: /tmp
+        # - macOS: /var/folders/... 或 /tmp
+        output_dir = Path(tempfile.gettempdir()) / "image-gen-skill"
+    
+    # 确保目录存在
+    output_dir.mkdir(parents=True, exist_ok=True)
+    return output_dir
+
+
+def extract_and_save_images(response_text: str, prefix: str = "img") -> list[dict]:
+    """
+    从响应文本中提取 base64 图片并保存到临时目录
+    
+    Args:
+        response_text: 包含 Markdown 图片的响应文本
+        prefix: 文件名前缀
+    
+    Returns:
+        保存的图片信息列表，每个元素包含：
+        - path: 保存的文件路径
+        - format: 图片格式（png, jpeg, gif, webp）
+        - size: 文件大小（字节）
+    """
+    saved_images = []
+    output_dir = get_output_dir()
+    
+    # 匹配 Markdown 格式的 base64 图片
+    # 格式：![alt](data:image/png;base64,...)
+    base64_pattern = r'!\[([^\]]*)\]\(data:image/([a-zA-Z]+);base64,([A-Za-z0-9+/=]+)\)'
+    
+    for match in re.finditer(base64_pattern, response_text):
+        alt_text, img_format, b64_data = match.groups()
+        
+        # 生成唯一文件名
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_id = str(uuid.uuid4())[:8]
+        filename = f"{prefix}_{timestamp}_{unique_id}.{img_format}"
+        filepath = output_dir / filename
+        
+        try:
+            # 解码并保存
+            img_bytes = base64.b64decode(b64_data)
+            with open(filepath, "wb") as f:
+                f.write(img_bytes)
+            
+            saved_images.append({
+                "path": str(filepath),
+                "format": img_format,
+                "size": len(img_bytes),
+                "alt": alt_text,
+            })
+        except Exception as e:
+            print(f"Warning: Failed to save image: {e}", file=sys.stderr)
+    
+    # 也处理 URL 格式的图片（如果需要下载）
+    url_pattern = r'!\[([^\]]*)\]\((https?://[^\)]+)\)'
+    for match in re.finditer(url_pattern, response_text):
+        alt_text, url = match.groups()
+        # URL 图片不保存，只记录信息
+        saved_images.append({
+            "url": url,
+            "alt": alt_text,
+            "format": "url",
+        })
+    
+    return saved_images
+
+
+def print_save_summary(saved_images: list[dict]) -> None:
+    """打印保存的图片摘要"""
+    if not saved_images:
+        return
+    
+    print("\n" + "=" * 60)
+    print("📁 图片保存位置:")
+    print(f"   目录: {get_output_dir()}")
+    print("-" * 60)
+    
+    for i, img in enumerate(saved_images, 1):
+        if "path" in img:
+            size_kb = img["size"] / 1024
+            print(f"   [{i}] {Path(img['path']).name}")
+            print(f"       格式: {img['format'].upper()}, 大小: {size_kb:.1f} KB")
+            print(f"       路径: {img['path']}")
+        elif "url" in img:
+            print(f"   [{i}] URL: {img['url'][:80]}...")
+    
+    print("=" * 60)
 
 
 def get_client() -> OpenAI:
@@ -188,7 +304,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
-  # 文生图
+  # 文生图（自动保存到临时目录）
   python generate.py --mode text --prompt "一只戴帽子的猫"
   
   # 图生图
@@ -196,6 +312,12 @@ def main():
   
   # 多图融合
   python generate.py --mode multi --prompt "融合风格" --images style.jpg,content.jpg
+  
+  # 指定输出目录
+  python generate.py --mode text --prompt "..." --output-dir /path/to/output
+  
+  # 不保存图片（仅打印响应）
+  python generate.py --mode text --prompt "..." --no-save
         """
     )
     
@@ -229,6 +351,15 @@ def main():
         help="禁用流式输出"
     )
     parser.add_argument(
+        "--no-save",
+        action="store_true",
+        help="不保存图片到临时目录（仅打印响应）"
+    )
+    parser.add_argument(
+        "--output-dir", "-o",
+        help="指定图片输出目录（默认为系统临时目录）"
+    )
+    parser.add_argument(
         "--config",
         action="store_true",
         help="打印当前配置"
@@ -238,9 +369,16 @@ def main():
     
     if args.config:
         Config.print_config()
+        print(f"\n当前输出目录: {get_output_dir()}")
         return
     
+    # 如果指定了输出目录，设置环境变量
+    if args.output_dir:
+        import os
+        os.environ["IMAGE_OUTPUT_DIR"] = args.output_dir
+    
     stream = not args.no_stream
+    result = None
     
     try:
         if args.mode == "text":
@@ -259,6 +397,12 @@ def main():
         
         if not stream:
             print(result)
+        
+        # 自动保存图片（除非明确指定不保存）
+        if result and not args.no_save:
+            saved_images = extract_and_save_images(result)
+            if saved_images:
+                print_save_summary(saved_images)
     
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)

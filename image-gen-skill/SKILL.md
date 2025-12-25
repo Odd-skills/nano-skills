@@ -133,6 +133,26 @@ python scripts/generate.py --mode text --prompt "..." --no-stream
 | `IMAGE_MODEL` | 模型名称 | `gemini-3-pro-preview` |
 | `IMAGE_OUTPUT_MODE` | 输出模式 (url/base64) | `url` |
 | `IMAGE_STREAM` | 启用流式 | `true` |
+| `IMAGE_OUTPUT_DIR` | 图片保存目录 | 系统临时目录 |
+
+## 图片自动保存
+
+> [!TIP]
+> 生成的图片会自动保存到临时目录，方便 AI 读取和展示。
+
+默认保存位置（跨平台兼容）：
+- **macOS**: `/var/folders/.../image-gen-skill/` 或 `/tmp/image-gen-skill/`
+- **Linux**: `/tmp/image-gen-skill/`
+- **Windows**: `C:\Users\<user>\AppData\Local\Temp\image-gen-skill\`
+
+命令行参数：
+```bash
+# 指定保存目录
+python generate.py --mode text --prompt "..." --output-dir /path/to/save
+
+# 不保存图片（仅输出响应）
+python generate.py --mode text --prompt "..." --no-save
+```
 
 ## 快速示例
 
