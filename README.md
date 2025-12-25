@@ -3,6 +3,7 @@
 > 一个轻量级的 AI Agent 技能库，为 AI 助手提供可扩展的专业能力。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.0.12+-blueviolet)](https://claude.ai)
 
 ## 📖 简介
 
@@ -15,50 +16,99 @@
 - **🔧 可扩展**：标准化的结构，易于添加新技能
 - **📚 自文档化**：每个技能包含完整的使用说明
 
-## 📁 项目结构
+## 🚀 快速安装
 
-```
-nano-skills/
-├── AGENTS.md                 # AI Agent 配置文件
-├── LICENSE                   # MIT 许可证
-├── README.md                 # 本文件
-└── image-gen-skill/          # 图片生成技能
-    ├── SKILL.md              # 技能说明文档
-    ├── scripts/              # 执行脚本
-    │   ├── generate.py       # 主生成脚本
-    │   └── config.py         # 配置管理
-    ├── assets/               # 静态资源
-    │   └── prompt-templates.md
-    └── references/           # 参考文档
-        └── api-examples.md
+### 方式一：Claude Plugins CLI（推荐）
+
+使用 `claude-plugins` CLI 工具一键安装：
+
+```bash
+npx claude-plugins install @Odd-skills/nano-skills
 ```
 
-## 🚀 快速开始
+管理已安装的插件：
 
-### 前置要求
+```bash
+# 列出已安装插件
+npx claude-plugins list
 
-- Python 3.8+
-- 一个支持 OpenAI 兼容格式的图片生成 API
+# 启用/禁用
+npx claude-plugins enable nano-skills
+npx claude-plugins disable nano-skills
+```
 
-### 安装
+### 方式二：手动安装 Skills
+
+将技能目录复制到 Claude 的 skills 目录：
 
 ```bash
 # 克隆仓库
 git clone https://github.com/Odd-skills/nano-skills.git
 cd nano-skills
 
-# 创建虚拟环境（推荐）
-python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-# 或 .venv\Scripts\activate  # Windows
+# 安装单个技能（个人使用）
+cp -r skills/image-gen-skill ~/.claude/skills/
 
-# 安装依赖
-pip install httpx -i https://pypi.tuna.tsinghua.edu.cn/simple
+# 或安装到项目（团队共享）
+cp -r skills/image-gen-skill .claude/skills/
 ```
 
-### 配置
+### 方式三：作为完整插件安装
 
-设置环境变量：
+```bash
+# 克隆到 Claude 插件目录
+git clone https://github.com/Odd-skills/nano-skills.git ~/.claude/plugins/nano-skills
+```
+
+## 📁 项目结构
+
+```
+nano-skills/
+├── .claude-plugin/
+│   └── plugin.json           # Claude Plugin 清单
+├── skills/                    # 技能目录
+│   └── image-gen-skill/       # 图片生成技能
+│       ├── SKILL.md           # 技能定义文件
+│       ├── scripts/           # 执行脚本
+│       │   ├── generate.py    # 主生成脚本
+│       │   └── config.py      # 配置管理
+│       ├── assets/            # 静态资源
+│       │   └── prompt-templates.md
+│       └── references/        # 参考文档
+│           └── api-examples.md
+├── AGENTS.md                  # AI Agent 配置
+├── LICENSE                    # MIT 许可证
+└── README.md                  # 本文件
+```
+
+## 📦 可用技能
+
+### 🖼️ image-generation
+
+**描述**：通过 OpenAI 兼容的 API 生成图片，支持文生图、图生图、多图融合。
+
+**触发条件**：当用户请求生成图片、设计 Logo、创建原型图、进行风格转换时自动激活。
+
+**功能矩阵**：
+
+| 模式 | 输入 | 输出 |
+|------|------|------|
+| 文生图 | 文字描述 | 生成图片 |
+| 图生图 | 文字 + 1张图片 | 转换后图片 |
+| 多图融合 | 文字 + 多张图片 | 融合图片 |
+
+**适用场景**：
+- 原型图设计（移动端/Web 界面）
+- SVG 图标生成
+- Logo 设计
+- 照片风格转换
+- 场景修改与合成
+
+详细文档：[skills/image-gen-skill/SKILL.md](./skills/image-gen-skill/SKILL.md)
+
+## ⚙️ 配置
+
+### 环境变量
 
 ```bash
 export IMAGE_API_BASE="http://your-api-endpoint/v1"
@@ -70,56 +120,33 @@ export IMAGE_MODEL="gemini-3-pro-preview"  # 可选
 
 ```bash
 # 文生图
-python image-gen-skill/scripts/generate.py --mode text --prompt "一只戴帽子的可爱猫咪"
+python skills/image-gen-skill/scripts/generate.py --mode text --prompt "一只戴帽子的可爱猫咪"
 
 # 图生图
-python image-gen-skill/scripts/generate.py --mode i2i --prompt "转为卡通风格" --image photo.jpg
+python skills/image-gen-skill/scripts/generate.py --mode i2i --prompt "转为卡通风格" --image photo.jpg
 
 # 多图融合
-python image-gen-skill/scripts/generate.py --mode multi --prompt "融合风格" --images style.jpg,content.jpg
+python skills/image-gen-skill/scripts/generate.py --mode multi --prompt "融合风格" --images style.jpg,content.jpg
 ```
-
-## 📦 可用技能
-
-### 🖼️ Image Generation Skill
-
-**描述**：通过 OpenAI 兼容的 API 生成图片，支持文生图、图生图、多图融合。
-
-**适用场景**：
-- 原型图设计（移动端/Web 界面）
-- SVG 图标生成
-- Logo 设计
-- 照片风格转换
-- 场景修改与合成
-
-**功能矩阵**：
-
-| 模式 | 输入 | 输出 |
-|------|------|------|
-| 文生图 | 文字描述 | 生成图片 |
-| 图生图 | 文字 + 1张图片 | 转换后图片 |
-| 多图融合 | 文字 + 多张图片 | 融合图片 |
-
-详细文档：[image-gen-skill/SKILL.md](./image-gen-skill/SKILL.md)
 
 ## 🤖 AI Agent 集成
 
-### 在 AI Agent 中使用
+### Claude Code
 
-本技能库支持多种 AI Agent 系统自动加载。AI 助手可以通过读取 `AGENTS.md` 文件了解可用技能，并按需调用。
+本项目完全兼容 Claude Code 的插件和技能规范：
 
-**调用方式**：
-```bash
-# AI 助手内部调用
-openskills read image-gen-skill
-```
+- **Plugin 格式**：包含 `.claude-plugin/plugin.json` 清单
+- **Skills 格式**：每个技能遵循 `SKILL.md` 规范
+- **自动发现**：Claude 会根据任务上下文自动决定是否使用技能
 
-### 支持的 AI 平台
+### 其他平台
 
-- ✅ Claude (via MCP)
-- ✅ Cursor
-- ✅ Gemini CLI / Canvas
-- ✅ 其他支持 Agent Protocol 的平台
+| 平台 | 支持方式 |
+|------|----------|
+| ✅ Claude Code | 完整插件支持 |
+| ✅ Cursor | 通过 AGENTS.md |
+| ✅ Gemini CLI | 通过 AGENTS.md |
+| ✅ GitHub Copilot | 通过 AGENTS.md |
 
 ## 🔧 开发指南
 
@@ -127,33 +154,43 @@ openskills read image-gen-skill
 
 1. 创建技能目录：
 ```bash
-mkdir -p my-new-skill/{scripts,assets,references}
+mkdir -p skills/my-new-skill/{scripts,assets,references}
 ```
 
-2. 创建 `SKILL.md` 文件，遵循以下格式：
+2. 创建 `SKILL.md` 文件：
 ```markdown
 ---
-name: 技能名称
-description: 技能简要描述
+name: my-new-skill
+description: 技能描述，说明何时应该使用此技能。
+allowed-tools:
+  - Bash
+  - Read
+  - Write
 ---
 
-# 技能名称
+# My New Skill
 
 详细的使用说明...
+
+## Instructions
+
+1. 步骤一
+2. 步骤二
+
+## Examples
+
+示例使用场景...
 ```
 
-3. 在 `AGENTS.md` 中注册新技能
+3. 更新 `AGENTS.md` 注册新技能
 
-### 技能结构规范
+### SKILL.md 规范
 
-每个技能应包含：
-
-| 文件/目录 | 必需 | 说明 |
-|-----------|------|------|
-| `SKILL.md` | ✅ | 技能说明文档 |
-| `scripts/` | ✅ | 可执行脚本 |
-| `assets/` | ⬜ | 静态资源（模板、配置等） |
-| `references/` | ⬜ | 参考文档和示例 |
+| 字段 | 必需 | 说明 |
+|------|------|------|
+| `name` | ✅ | 唯一标识符，小写 + 连字符，最长 64 字符 |
+| `description` | ✅ | 技能描述和触发条件，最长 1024 字符 |
+| `allowed-tools` | ⬜ | 限制可使用的工具列表 |
 
 ## 📄 许可证
 

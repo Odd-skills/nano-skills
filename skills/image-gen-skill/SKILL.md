@@ -1,6 +1,10 @@
 ---
-name: Image Generation
-description: 通过 OpenAI 兼容的 API 生成图片，支持文生图、图生图、多图融合。适用于原型图设计、SVG 设计、Logo 设计等场景。
+name: image-generation
+description: 通过 OpenAI 兼容的 API 生成图片，支持文生图、图生图、多图融合。适用于原型图设计、SVG 设计、Logo 设计等场景。当用户请求生成图片、设计 Logo、创建原型图、进行风格转换时使用此技能。
+allowed-tools:
+  - Bash
+  - Read
+  - Write
 ---
 
 # Image Generation Skill

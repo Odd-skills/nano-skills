@@ -1,0 +1,22 @@
+{
+  "name": "nano-skills",
+  "version": "1.0.0",
+  "description": "A lightweight AI Agent skills library providing extensible professional capabilities. Includes image generation, prototype design, logo creation, and style transfer skills.",
+  "author": "Odd-skills",
+  "repository": "https://github.com/Odd-skills/nano-skills",
+  "license": "MIT",
+  "components": {
+    "skills": [
+      "skills/"
+    ]
+  },
+  "keywords": [
+    "claude",
+    "agent-skills",
+    "image-generation",
+    "ai-tools"
+  ],
+  "engines": {
+    "claude-code": ">=2.0.12"
+  }
+}
