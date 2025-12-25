@@ -1,0 +1,28 @@
+{
+  "name": "Nano Skills Marketplace",
+  "description": "A lightweight AI Agent skills library providing extensible professional capabilities.",
+  "owner": {
+    "name": "Odd-skills",
+    "url": "https://github.com/Odd-skills"
+  },
+  "plugins": [
+    {
+      "name": "nano-skills",
+      "description": "A collection of AI Agent skills including image generation, prototype design, logo creation, and style transfer.",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "Odd-skills",
+        "url": "https://github.com/Odd-skills"
+      },
+      "category": "productivity",
+      "tags": [
+        "image-generation",
+        "ai-tools",
+        "design",
+        "skills"
+      ],
+      "needsPluginJson": true
+    }
+  ]
+}
