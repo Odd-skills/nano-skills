@@ -69,9 +69,34 @@ allowed-tools:
 
 ### 3. 调用脚本
 
-执行 `scripts/generate.py` 发送请求：
+> [!IMPORTANT]
+> **建议使用 Python 虚拟环境**执行脚本，避免依赖冲突。
+
+#### 环境设置（首次使用）
 
 ```bash
+# 进入技能目录
+cd <skill-base-dir>
+
+# 创建虚拟环境
+python3 -m venv .venv
+
+# 激活虚拟环境
+source .venv/bin/activate  # Linux/macOS
+# 或 .venv\Scripts\activate  # Windows
+
+# 安装依赖
+pip install httpx -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+#### 执行脚本
+
+**确保虚拟环境已激活**后，执行 `scripts/generate.py`：
+
+```bash
+# 激活虚拟环境（如未激活）
+source <skill-base-dir>/.venv/bin/activate
+
 # 文生图
 python scripts/generate.py --mode text --prompt "描述内容"
 
