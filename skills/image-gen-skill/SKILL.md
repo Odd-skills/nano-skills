@@ -21,11 +21,18 @@ allowed-tools:
 
 ## 使用场景
 
-- **原型图设计**：快速生成移动端/Web 界面原型
+- **产品原型设计**：生成 Figma 兼容的 UI 原型
+  - iOS App (Apple HIG 风格)
+  - Android App (Material Design 3)
+  - SaaS Dashboard / 管理后台
+  - Landing Page / 营销落地页
 - **SVG 图标**：生成扁平化、单色图标
 - **Logo 设计**：为品牌创建极简 Logo
 - **风格转换**：油画、水彩、卡通、像素风格
 - **场景修改**：替换背景、添加/移除元素
+
+> [!TIP]
+> 详细的提示词模板请参考 `assets/prompt-templates.md`，包含设计系统规范、平台特定模板和组件级提示词。
 
 ## 执行流程
 
